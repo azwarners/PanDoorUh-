@@ -1,3 +1,6 @@
+// Written by Nick Warner, 2019
+// GPL 3 (Full license in COPYING file)
+
 // This chunk of code gets the data from the page
 
 var getSongContainer = function(){
