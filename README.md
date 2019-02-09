@@ -5,4 +5,4 @@ Live track skipper - Growing up listening to traditional over-the-air radio stat
 
 Artist blacklist - Everyone has at least one band/artist that they can't stand. Don't they? I have several, but, of course, I won't name them here so as not to offend potential users. Just add them to the "artistBlacklist" array in pandooruh_plus_plus.js.
 
-That's it for now, but this projet is still in its infancy. As soon as the bugs get worked out, I'll be adding more features.
+That's it for now, but this project is still in its infancy. As soon as the bugs get worked out, I'll be adding more features.
