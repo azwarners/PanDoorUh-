@@ -1,95 +1,62 @@
+// PanDoorUh ++
 // Written by Nick Warner, 2019
 // GPL 3 (Full license in COPYING file)
 
-// This chunk of code gets the data from the page
+var title = '';
+var artist = '';
+var album = '';
 
-var getSongContainer = function(){
-  var songContainer = document.getElementsByClassName("Marquee__wrapper__content");
-  if (typeof songContainer[0] == 'undefined'){
-    songContainer = document.getElementsByClassName("Marquee__wrapper__content__child");
-  }
-  return songContainer[0];
-};
-
-var getSongTitle = function(){
-  return getSongContainer().innerText;
-};
-
-var getArtist = function(){
-  var artistContainer = document.getElementsByClassName("nowPlayingTopInfo__current__artistName nowPlayingTopInfo__current__link");
-  return artistContainer[0].innerText;
-};
-
-
-
-
-// This chunk of code pushes thumb down if the artist is blacklisted
-// Change the strings in the following array to artists you don't want to hear
 var artistBlacklist = [
   'Artist01',
   'Artist02',
   'Artist03'
 ];
 
-var thumbDownIfArtistBlacklisted = function(){
-  var artist = getArtist();
-  var isBlacklisted = false;
-  var thumbDownButton = document.getElementsByClassName("TunerControl ThumbDownButton Tuner__Control__Button Tuner__Control__ThumbDown__Button");
-  artistBlacklist.forEach(function(elem, index, arr){
-    if (artist.includes(elem)) isBlacklisted = true;
-  });
-  console.log(artist + (isBlacklisted ? " is blacklisted" : " is not blacklisted"));
-  if (isBlacklisted) thumbDownButton[0].click();
+var fetchTrackInfo = function() {
+    return {
+        'title': $('.nowPlayingTopInfo__current__trackName').filter(":first").text(),
+        'artist': $('.nowPlayingTopInfo__current__artistName').filter(":first").text(),
+        'album': $('.nowPlayingTopInfo__current__albumName').filter(":first").text()
+    };
 };
 
+var checkForNewTrack = setInterval(function () {
+    var track = fetchTrackInfo();
 
+    if($('.MiniCoachmarkBingeSkipper__x')) {
+       $('.MiniCoachmarkBingeSkipper__x').click();
+    }
 
+    if (title != track.title || artist != track.artist || album != track.album) {
+    	title = track.title ;
+    	artist = track.artist;
+    	album = track.album;
+        analyzeTrack();
+    }
 
-// This chunk of code pushes thumb down if the track is live
+}, 2000);
 
-var isLive = function(title){
-  if ( title.includes("(Live") || title.includes("[Live") || title.includes("Live)") )
-    return true;
-  else
-    return false;
+var isLive = function(t) {
+    if( t.includes("(Live") || t.includes("[Live") || t.includes("Live)") ) {
+        return true;
+    }
+    else {
+        return false;
+    }
 };
 
-var thumbDownIfLive = function(){
-  var songTitle = getSongTitle();
-  var thumbDownButton = document.getElementsByClassName("TunerControl ThumbDownButton Tuner__Control__Button Tuner__Control__ThumbDown__Button");
-  console.log(songTitle + (isLive(songTitle) ? " is live" : " is a studio track") );
-  if (isLive(songTitle)) thumbDownButton[0].click();
+var isBlacklisted = function(name) {
+    var blacklisted = false;
+    artistBlacklist.forEach(val => { if(name.includes(val)) blacklisted = true; });
+    return blacklisted;
 };
 
-
-
-
-var performChecks = function(){
-  thumbDownIfLive();
-  thumbDownIfArtistBlacklisted();
-};
-performChecks();
-
-
-
-
-// This chunk of code monitors for song changes
-
-var aboutArtist = document.getElementsByClassName("NowPlaying__belowFold");
-
-// Select the node that will be observed for mutations
-var targetNode = aboutArtist[0];
-
-// Options for the observer (which mutations to observe)
-var config = { attributes: true, characterData: true, childList: true, subtree: true };
-
-// Callback function to execute when mutations are observed
-var callback = function(mutationsList, observer) {
-  performChecks();
-};
-
-// Create an observer instance linked to the callback function
-var observer = new MutationObserver(callback);
-
-// Start observing the target node for configured mutations
-observer.observe(targetNode, config);
+function analyzeTrack() {
+    var titleInfo = title + ( isLive(title) ? " is a live track." : " is a studio track." );
+    var artistInfo = artist + (isBlacklisted(artist) ? " is blacklisted." : " is not blacklisted.");
+    console.log(titleInfo + " " + artistInfo);
+    var thumbDownButton = document.getElementsByClassName("TunerControl ThumbDownButton Tuner__Control__Button Tuner__Control__ThumbDown__Button");
+    if(isLive(title) || isBlacklisted(artist)) {
+        thumbDownButton[0].click();
+    };
+}
