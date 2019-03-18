@@ -39,7 +39,8 @@ var checkForNewTrack = setInterval(function () {
 }, 2000);
 
 var isLive = function(t) {
-    if( t.includes("(Live") || t.includes("[Live") || t.includes("Live)") ) {
+    t = t.toLowerCase();
+    if( t.includes("(live") || t.includes("[live") || t.includes("live)") ) {
         return true;
     }
     else {
