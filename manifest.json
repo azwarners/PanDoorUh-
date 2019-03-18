@@ -9,7 +9,7 @@
   "content_scripts": [
     {
       "matches": ["*://*.pandora.com/*"],
-      "js": ["jquery-3.3.1.min.js", "pandooruh_plus_plus.js"]
+      "js": ["pandooruh_plus_plus.js"]
     }
   ]
 
